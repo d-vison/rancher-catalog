@@ -1,9 +1,9 @@
 .catalog:
   name: "UC6 Platform"
   version: "v1.4"
-  description: "6fusion UC6 Infrastructure Metering Platform. Requires Rancher version 1.0"
-  uuid: uc6-platform-0
-  minimum_rancher_version: v0.51.0
+  description: "6fusion UC6 Infrastructure Metering Platform."
+  uuid: uc6-0
+  minimum_rancher_version: v1.0
   questions:
 memcache:
   scale: 1
