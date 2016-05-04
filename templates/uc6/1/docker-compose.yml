@@ -2,7 +2,7 @@ memcache:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: dvison/memcached:latest
+  image: dvison/memcache:latest
   stdin_open: true
 console:
   ports:
@@ -29,7 +29,7 @@ mongodb:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: dvison/mongo:latest
+  image: dvison/mongodb:latest
   stdin_open: true
 database:
   ports:
