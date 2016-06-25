@@ -1,33 +1,33 @@
-memcache:
-  log_driver: ''
-  tty: true
-  log_opt: {}
-  image: memcached:1.4
-  stdin_open: true
 console:
   ports:
   - 80:8080/tcp
   environment:
-    DB_IP_ADDRESS: database.uc6.rancher.internal
     MEMCACHE_IP_ADDRESS: memcache.uc6.rancher.internal
-    CONSOLE_IP_ADDRESS: console.uc6.rancher.internal
-    API_IP_ADDRESS: console.uc6.rancher.internal
+    REDIS_IP_ADDRESS: redis.uc6.rancher.internal
+    MONGODB_IP_ADDRESS: mongodb.uc6.rancher.internal:27017
+    DATABASE_PORT: database.uc6.rancher.internal
   log_driver: ''
   tty: true
   log_opt: {}
-  image: console_api:1.4
+  image: dvison/uc6-console:0.5
+  stdin_open: true
+memcache:
+  log_driver: ''
+  tty: true
+  log_opt: {}
+  image: dvison/uc6-memcached:0.5
   stdin_open: true
 redis:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: redis:3.0-alpine
+  image: dvison/uc6-redis:0.5
   stdin_open: true
 mongodb:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: mongo:3.2
+  image: dvison/uc6-mongodb:0.5
   stdin_open: true
 database:
   ports:
@@ -35,5 +35,5 @@ database:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: postgres:9.2
+  image: dvison/uc6-database:data
   stdin_open: true
