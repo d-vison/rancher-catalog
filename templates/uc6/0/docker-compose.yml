@@ -4,7 +4,7 @@ console:
   environment:
     MEMCACHE_IP_ADDRESS: memcache.uc6.rancher.internal
     REDIS_IP_ADDRESS: redis.uc6.rancher.internal
-    MONGODB_IP_ADDRESS: mongodb.uc6.rancher.internal:27017
+    MONGODB_IP_ADDRESS: mongo.uc6.rancher.internal:27017
     DATABASE_PORT: database.uc6.rancher.internal
   log_driver: ''
   tty: true
@@ -15,7 +15,7 @@ memcache:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: dvison/uc6-memcached:0.5
+  image: dvison/uc6-memcache:0.5
   stdin_open: true
 redis:
   log_driver: ''
@@ -23,11 +23,11 @@ redis:
   log_opt: {}
   image: dvison/uc6-redis:0.5
   stdin_open: true
-mongodb:
+mongo:
   log_driver: ''
   tty: true
   log_opt: {}
-  image: dvison/uc6-mongodb:0.5
+  image: dvison/uc6-mongo:0.5
   stdin_open: true
 database:
   ports:
