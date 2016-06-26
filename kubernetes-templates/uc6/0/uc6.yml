@@ -1,12 +1,4 @@
 apiVersion: v1
-data:
-  .dockercfg: eyAiaHR0cHM6Ly9pbmRleC5kb2NrZXIuaW8vdjEvIjogeyAiYXV0aCI6ICJaSFpwYzI5dU9qTmxOWFEzZFNORkpWUW1WUT09IiwgImVtYWlsIjog4oCcZHNleW1vdXJANmZ1c2lvbi5jb20iIH0gfQ==
-kind: Secret
-metadata:
-  name: uc6-registry
-type: kubernetes.io/dockercfg
----
-apiVersion: v1
 kind: Service
 metadata:
   name: uc6-console-service
