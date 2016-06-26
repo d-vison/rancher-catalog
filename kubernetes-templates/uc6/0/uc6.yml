@@ -1,0 +1,173 @@
+apiVersion: v1
+data:
+  .dockercfg: eyAiaHR0cHM6Ly9pbmRleC5kb2NrZXIuaW8vdjEvIjogeyAiYXV0aCI6ICJaSFpwYzI5dU9qTmxOWFEzZFNORkpWUW1WUT09IiwgImVtYWlsIjog4oCcZHNleW1vdXJANmZ1c2lvbi5jb20iIH0gfQ==
+kind: Secret
+metadata:
+  name: uc6-registry
+type: kubernetes.io/dockercfg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uc6-console-service
+spec:
+  ports:
+  - name: uc6-console-expose
+    port: 80
+    targetPort: 8080
+  selector:
+    6fusion-app: console
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uc6-database-service
+spec:
+  ports:
+  - name: uc6-database-expose
+    port: 5432
+    targetPort: 5432
+  selector:
+    6fusion-app: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uc6-mongodb-service
+spec:
+  ports:
+  - name: uc6-mongodb-expose
+    port: 27017
+    targetPort: 27017
+  selector:
+    6fusion-app: mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uc6-redis-service
+spec:
+  ports:
+  - name: uc6-redis-expose
+    port: 6379
+    targetPort: 6739
+  selector:
+    6fusion-app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uc6-memcache-service
+spec:
+  ports:
+  - name: uc6-memcache-expose
+    port: 11211
+    targetPort: 11211
+  selector:
+    6fusion-app: memcache
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: memcache
+    version: v0.5
+  name: uc6-memcache
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: memcache
+  template:
+    metadata:
+      labels:
+        6fusion-app: memcache
+    spec:
+      containers:
+      - name: uc6-memcache
+        image: docker.io/dvison/uc6-memcache:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: redis
+    version: v0.5
+  name: uc6-redis
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: redis
+  template:
+    metadata:
+      labels:
+        6fusion-app: redis
+    spec:
+      containers:
+      - name: uc6-redis
+        image: docker.io/dvison/uc6-redis:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: mongodb
+    version: v0.5
+  name: uc6-mongodb
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: mongodb
+  template:
+    metadata:
+      labels:
+        6fusion-app: mongodb
+    spec:
+      containers:
+      - name: uc6-redis
+        image: docker.io/dvison/uc6-mongo:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: database
+    version: v0.5
+  name: uc6-database
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: database
+  template:
+    metadata:
+      labels:
+        6fusion-app: database
+    spec:
+      containers:
+      - name: uc6-database
+        image: docker.io/dvison/uc6-database:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: console
+    version: v0.5
+  name: uc6-console
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: console
+  template:
+    metadata:
+      labels:
+        6fusion-app: console
+    spec:
+      containers:
+      - name: uc6-console
+        image: docker.io/dvison/uc6-console:0.5
+      imagePullSecrets:
+      - name: uc6-registry
+
+
+

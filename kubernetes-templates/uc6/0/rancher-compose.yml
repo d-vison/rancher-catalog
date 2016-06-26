@@ -1,0 +1,5 @@
+.catalog:
+  name: "UC6 Platform"
+  version: "v0.5"
+  description: "6fusion UC6 Infrastructure Metering Platform."
+  questions:
