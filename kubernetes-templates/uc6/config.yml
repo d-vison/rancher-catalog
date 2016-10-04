@@ -1,5 +1,6 @@
 name: "UC6 Platform"
 description: |
   6fusion UC6 Infrastructure Metering Platform
-version: v0.7
+version: v1.0
 category: Metering
+maintainer: Delano Seymour

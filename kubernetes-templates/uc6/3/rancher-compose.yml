@@ -1,0 +1,23 @@
+.catalog:
+  name: "UC6 Platform"
+  version: "v1.0"
+  description: "6fusion UC6 Infrastructure Metering Platform."
+  questions:
+    - variable: "SQLVolumeID"
+      label: "Enter the AWS Volume ID for the SQL Database:"
+      required: true
+      type: "string"
+    - variable: "SQLVolumeSize"
+      label: "Enter the AWS Volume Size for the SQL Database:"
+      default: 500Gi
+      required: true
+      type: "string"
+    - variable: "MongoVolumeID"
+      label: "Enter the AWS Volume ID for the MongoDB Database:"
+      required: true
+      type: string
+    - variable: "MongoVolumeSize"
+      label: "Enter the AWS Volume Size for the MongoDB Database:"
+      default: 100Gi
+      required: true
+      type: "string"

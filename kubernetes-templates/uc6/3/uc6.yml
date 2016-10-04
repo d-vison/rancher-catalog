@@ -1,0 +1,284 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-database
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: postgresql-port
+    port: 5432
+    targetPort: 5432
+  selector:
+    6fusion-app: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-mongodb
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: mongodb-port
+    port: 27017
+    targetPort: 27017
+  selector:
+    6fusion-app: mongodb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-redis
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: redis-port
+    port: 6379
+    targetPort: 6379
+  selector:
+    6fusion-app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-memcache
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: memcache-port
+    port: 11211
+    targetPort: 11211
+  selector:
+    6fusion-app: memcache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-api
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: api-port
+    port: 80
+    targetPort: 8080
+  selector:
+    6fusion-app: console
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-controlroom
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: torquebox-port
+    port: 5445
+    targetPort: 5445
+  selector:
+    6fusion-app: console
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    version: v1.0
+  name: uc6-console
+  namespace: uc6-dedicated
+spec:
+  ports:
+  - name: console-port
+    port: 80
+    targetPort: 8080
+  selector:
+    6fusion-app: console
+  type: LoadBalancer
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: uc6-database-claim
+  namespace: uc6-dedicated
+spec:
+  capacity:
+    storage: ${SQLVolumeSize}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  awsElasticBlockStore:
+    volumeID: ${SQLVolumeID}
+    fsType: "ext4"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: uc6-mongodb-claim
+  namespace: uc6-dedicated
+spec:
+  capacity:
+    storage: ${MongoVolumeSize}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  awsElasticBlockStore:
+    volumeID: ${MongoVolumeID}
+    fsType: "ext4"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    6fusion-app: storage
+  name: uc6-database-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${SQLVolumeSize}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    6fusion-app: storage
+  name: uc6-mongodb-claim
+  namespace: uc6-dedicated
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${MongoVolumeSize}
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: database
+    version: v1.0
+  name: uc6-database
+  namespace: uc6-dedicated
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: database
+  template:
+    metadata:
+      labels:
+        6fusion-app: database
+    spec:
+      containers:
+      - name: uc6-database
+        image: docker.io/dvison/uc6-database:0.9
+        env:
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: uc6-database-volume
+          mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: uc6-database-volume
+          persistentVolumeClaim:
+            claimName: uc6-database-claim
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: mongodb
+    version: v1.0
+  name: uc6-mongodb
+  namespace: uc6-dedicated
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: mongodb
+  template:
+    metadata:
+      labels:
+        6fusion-app: mongodb
+    spec:
+      containers:
+      - name: uc6-mongodb
+        image: docker.io/dvison/uc6-mongo:0.5
+        volumeMounts:
+        - name: uc6-mongodb-volume
+          mountPath: /usr/local/var/lib/couchdb
+      volumes:
+        - name: uc6-mongodb-volume
+          persistentVolumeClaim:
+            claimName: uc6-mongodb-claim
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: redis
+    version: v1.0
+  name: uc6-redis
+  namespace: uc6-dedicated
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: redis
+  template:
+    metadata:
+      labels:
+        6fusion-app: redis
+    spec:
+      containers:
+      - name: uc6-redis
+        image: docker.io/dvison/uc6-redis:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: memcache
+    version: v1.0  
+  name: uc6-memcache
+  namespace: uc6-dedicated
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: memcache
+  template:
+    metadata:
+      labels:
+        6fusion-app: memcache
+    spec:
+      containers:
+      - name: uc6-memcache
+        image: docker.io/dvison/uc6-memcache:0.5
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    6fusion-app: console
+    version: v1.0
+  name: uc6-console
+spec:
+  replicas: 1
+  selector:
+    6fusion-app: console
+  template:
+    metadata:
+      labels:
+        6fusion-app: console
+    spec:
+      containers:
+      - name: uc6-console
+        image: docker.io/dvison/uc6-console:0.11
